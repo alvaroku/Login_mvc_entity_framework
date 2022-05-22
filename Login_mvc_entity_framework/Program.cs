@@ -1,9 +1,43 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Login_mvc_entity_framework.Areas.Identity.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+//para login
+string connString = ConfigurationExtensions.GetConnectionString(builder.Configuration, "DefaultConnectionString");
+builder.Services.AddDbContext<AppDbContext>(
+    options => options.UseSqlServer(connString)
+);
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<AppDbContext>();;
+
+//
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+//para verificar la creación de las tablas
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.EnsureCreated();
+    }
+    catch (System.Exception pException)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(pException, "An error ocurred creating the data base.");
+    }
+}
+//
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -17,11 +51,20 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
+/*app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
+*/
+//para login
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+    endpoints.MapRazorPages();
+});
 app.Run();
