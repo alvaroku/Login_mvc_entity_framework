@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Login_mvc_entity_framework.Areas.Identity.Data;
 
-public class AppDbContext : IdentityDbContext<IdentityUser>
+public class AppDbContext : IdentityDbContext<Usuario>
 {
-    //public DbSet<IdentityUser> Usuarios { get; set; }
+    //aqui van los dbSet
 
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)

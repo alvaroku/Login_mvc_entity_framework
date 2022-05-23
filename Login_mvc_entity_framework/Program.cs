@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Login_mvc_entity_framework.Areas.Identity.Data;
+using Login_mvc_entity_framework.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(
     options => options.UseSqlServer(connString)
 );
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<Usuario>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<AppDbContext>();;
 
 //
@@ -21,7 +22,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-//para verificar la creación de las tablas
+//para verificar la creaciï¿½n de las tablas
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
